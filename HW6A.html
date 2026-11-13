@@ -1,0 +1,110 @@
+<!--
+
+Nataly Tuong
+Joshua Xotoy
+William Lopez
+
+11-12-2026
+
+HW6A
+
+ -->
+
+ <!doctype html>
+<html>
+<head>
+  <title>External Texture</title>
+
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: black;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="gl-canvas" width="512" height="512">
+    Your browser does not support HTML5 canvas.
+  </canvas>
+
+  <!-- Vertex Shader -->
+  <script id="vertex-shader" type="x-shader/x-vertex">
+    #version 300 es
+
+    in vec4 aPosition;
+    in vec3 aNormal;
+    in vec2 aTexCoord;
+
+    out vec4 vColor;
+    out vec2 vTexCoord;
+
+    uniform vec4 uAmbientProduct;
+    uniform vec4 uDiffuseProduct;
+    uniform vec4 uSpecularProduct;
+    uniform mat4 uModelViewMatrix;
+    uniform mat4 uProjectionMatrix;
+    uniform vec4 uLightPosition;
+    uniform float uShininess;
+
+    void main()
+    {
+      vec3 pos = (uModelViewMatrix * aPosition).xyz;
+
+      vec3 L = normalize(uLightPosition.xyz);
+      vec3 E = normalize(-pos);
+      vec3 H = normalize(L + E);
+      vec3 N = normalize((uModelViewMatrix * vec4(aNormal, 0.0)).xyz);
+
+      vec4 ambient = uAmbientProduct;
+
+      float Kd = max(dot(L, N), 0.0);
+      vec4 diffuse = Kd * uDiffuseProduct;
+
+      float Ks = pow(max(dot(N, H), 0.0), uShininess);
+      vec4 specular = Ks * uSpecularProduct;
+
+      if (dot(L, N) < 0.0)
+        specular = vec4(0.0, 0.0, 0.0, 1.0);
+
+      gl_Position = uProjectionMatrix * uModelViewMatrix * aPosition;
+
+      vColor = ambient + diffuse + specular;
+      vColor.a = 1.0;
+
+      vTexCoord = aTexCoord;
+    }
+  </script>
+
+  <!-- Fragment Shader -->
+  <script id="fragment-shader" type="x-shader/x-fragment">
+    #version 300 es
+
+    precision mediump float;
+
+    in vec4 vColor;
+    in vec2 vTexCoord;
+
+    uniform sampler2D uTexture;
+
+    out vec4 fColor;
+
+    void main()
+    {
+      vec4 texColor = texture(uTexture, vTexCoord);
+      fColor = texColor * vColor;
+    }
+  </script>
+
+  <script src="./Common/initShaders.js"></script>
+  <script src="./Common/MV.js"></script>
+  <script src="HW6A.js"></script>
+</body>
+</html>

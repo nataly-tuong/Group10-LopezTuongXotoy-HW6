@@ -1,4 +1,11 @@
 Nataly Tuong
 Joshua Xotoy
 William Lopez
-[Date]
+
+November 12, 2026
+
+The solution was just a quick copy-paste from the previous homework assignment, since the
+instructions were, "All requirements of HW5." That is why the comments didn't really change (I think).
+We got a quick photo of a clover in a field of grass, to have a bit of a clover look in the front, and
+a grassy texture on the sides of the object. It requires a live local server to run the external
+texture. I am using VS Code with the Live Server extension for this.
